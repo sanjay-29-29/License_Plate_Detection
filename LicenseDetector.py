@@ -36,13 +36,15 @@ with open(lblpath, 'r') as f:
 # Initialize EasyOCR reader
 reader = easyocr.Reader(['en'])
 
+fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Choose the codec (codec depends on the system)
+output_video = cv2.VideoWriter('output_video.avi', fourcc, 20.0, (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
+
 while True:
     ret, frame = cap.read()
     image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     imH, imW, _ = frame.shape
     image_resized = cv2.resize(image_rgb, (width, height))
     input_data = np.expand_dims(image_resized, axis=0)
-
     if float_input:
         input_data = (np.float32(input_data) - input_mean) / input_std
 
@@ -77,9 +79,10 @@ while True:
             for result in ocr_result:
                 text = result[1]
                 # Display the recognized text on the frame
-                cv2.putText(frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+                cv2.putText(frame, "Licesnse Plate:"+text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
     
     cv2.imshow('output', frame)
+    output_video.write(frame)
     if(cv2.waitKey(1) & 0xFF == ord('q')):
         break
 
