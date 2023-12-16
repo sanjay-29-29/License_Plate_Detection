@@ -1,0 +1,6 @@
+opencv-python
+pillow
+easyocr
+numpy
+tensorflow==2.4.0
+matplotlib
